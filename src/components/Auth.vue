@@ -1,7 +1,9 @@
 <template>
-    <div class="fixed z-10 inset-0 overflow-y-auto"
-      :class="{ hidden: !authModalShow }"
-     id="modal">
+  <div
+    class="fixed z-10 inset-0 overflow-y-auto"
+    :class="{ hidden: !authModalShow }"
+    id="modal"
+  >
     <div
       class="
         flex
@@ -44,7 +46,10 @@
           <div class="flex justify-between items-center pb-4">
             <p class="text-2xl font-bold">Your Account</p>
             <!-- Modal Close Button -->
-            <div class="modal-close cursor-pointer z-50" @click.prevent="toggleAuthModal">
+            <div
+              class="modal-close cursor-pointer z-50"
+              @click.prevent="toggleAuthModal"
+            >
               <i class="fas fa-times"></i>
             </div>
           </div>
@@ -53,27 +58,25 @@
           <ul class="flex flex-wrap mb-4">
             <li class="flex-auto text-center">
               <a
-                class="
-                  block
-                  rounded
-                  py-3
-                  px-4
-                  transition
-                "
-                :class="{ 'hover:text-white text-white bg-blue-600': tab === 'login',
-                  'hover:text-blue-600': tab === 'register'
-                 }"
+                class="block rounded py-3 px-4 transition"
+                :class="{
+                  'hover:text-white text-white bg-blue-600': tab === 'login',
+                  'hover:text-blue-600': tab === 'register',
+                }"
                 href="#"
                 @click.prevent="tab = 'login'"
                 >Login</a
               >
             </li>
             <li class="flex-auto text-center">
-              <a class="block rounded py-3 px-4 transition" href="#"
-              :class="{ 'hover:text-white text-white bg-blue-600': tab === 'register',
-                  'hover:text-blue-600': tab === 'login'
-                 }"
-                 @click.prevent="tab = 'register'"
+              <a
+                class="block rounded py-3 px-4 transition"
+                href="#"
+                :class="{
+                  'hover:text-white text-white bg-blue-600': tab === 'register',
+                  'hover:text-blue-600': tab === 'login',
+                }"
+                @click.prevent="tab = 'register'"
                 >Register</a
               >
             </li>
@@ -139,7 +142,12 @@
             </button>
           </vee-form>
           <!-- Registration Form -->
-          <vee-form v-show="tab === 'register'" :validation-schema="schema">
+          <vee-form
+            v-show="tab === 'register'"
+            :validation-schema="schema"
+            @submit="register"
+            :initial-values="userData"
+          >
             <!-- Name -->
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
@@ -208,28 +216,39 @@
             <!-- Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
-              <input
+              <vee-field
                 type="password"
-                class="
-                  block
-                  w-full
-                  py-1.5
-                  px-3
-                  text-gray-800
-                  border border-gray-300
-                  transition
-                  duration-500
-                  focus:outline-none focus:border-black
-                  rounded
-                "
-                placeholder="Password"
-              />
+                name="password"
+                :bails="false"
+                v-slot="{ field, errors }"
+              >
+                <input
+                  class="
+                    block
+                    w-full
+                    py-1.5
+                    px-3
+                    text-gray-800
+                    border border-gray-300
+                    transition
+                    duration-500
+                    focus:outline-none focus:border-black
+                    rounded
+                  "
+                  placeholder="Password"
+                  v-bind="field"
+                />
+                <div class="text-red-600" v-for="error in errors" :key="error">
+                  {{ error }}
+                </div>
+              </vee-field>
             </div>
             <!-- Confirm Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Confirm Password</label>
-              <input
+              <vee-field
                 type="password"
+                name="confirm_password"
                 class="
                   block
                   w-full
@@ -244,11 +263,14 @@
                 "
                 placeholder="Confirm Password"
               />
+              <ErrorMessage class="text-red-600" name="confirm_password" />
             </div>
             <!-- Country -->
             <div class="mb-3">
               <label class="inline-block mb-2">Country</label>
-              <select
+              <vee-field
+                as="select"
+                name="country"
                 class="
                   block
                   w-full
@@ -265,15 +287,20 @@
                 <option value="USA">USA</option>
                 <option value="Mexico">Mexico</option>
                 <option value="Germany">Germany</option>
-              </select>
+                <option value="Antarctica">Antarctica</option>
+              </vee-field>
+              <ErrorMessage class="text-red-600" name="country" />
             </div>
             <!-- TOS -->
             <div class="mb-3 pl-6">
-              <input
+              <vee-field
+                name="tos"
+                value="1"
                 type="checkbox"
                 class="w-4 h-4 float-left -ml-6 mt-1 rounded"
               />
-              <label class="inline-block">Accept terms of service</label>
+              <label class="inline-block">Accept terms of service</label> <br />
+              <ErrorMessage class="text-red-600" name="tos" />
             </div>
             <button
               type="submit"
@@ -310,10 +337,13 @@ export default {
         name: 'required|min:3|max:100|alphaSpaces',
         email: 'required|min:3|max:100|email',
         age: 'required|minValue:18|maxValue:100',
-        password: '',
-        confirm_password: '',
-        country: '',
-        tos: '',
+        password: 'required|min:6|max:12',
+        confirm_password: 'confirmed:@password',
+        country: 'required|excluded:Antarctica',
+        tos: 'required',
+      },
+      userData: {
+        country: 'USA',
       },
     };
   },
@@ -322,6 +352,9 @@ export default {
   },
   methods: {
     ...mapMutations(['toggleAuthModal']),
+    register(values) {
+      console.log(values);
+    },
   },
 };
 </script>
