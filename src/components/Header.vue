@@ -24,7 +24,7 @@
           </li>
           <template v-else>
             <li>
-              <router-link class="px-2 text-white" :to="{ name: 'manage'}"
+              <router-link class="px-2 text-white" :to="{ name: 'manage' }"
                 >Manage</router-link
               >
             </li>
@@ -55,9 +55,9 @@ export default {
         router: this.$router,
         route: this.$route,
       });
-      if (this.$router.meta.requiresAuth) {
-        this.$router.push({ name: 'home' });
-      }
+      // if (this.$route.meta.requiresAuth) {
+      //   this.$router.push({ name: 'home' });
+      // }
     },
   },
 };
